@@ -38,7 +38,12 @@
                 ></el-input
               ></el-col>
               <el-col :span="8">
-                <img class="login_imgCode" src="@/assets/img/code.jpg" alt="" />
+                <img
+                  class="login_imgCode"
+                  :src="login_imgCode"
+                  @click="refreshCode"
+                  alt=""
+                />
               </el-col>
             </el-row>
           </el-form-item>
@@ -65,9 +70,12 @@
 </template>
 
 <script>
+import { toLogin } from '@/api/login.js'
+import { saveToken } from '@/util/token.js'
 export default {
   data () {
     return {
+      login_imgCode: process.env.VUE_APP_URL + '/captcha?type=login',
       form: {
         isPass: '',
         phone: '', //是	string	手机号
@@ -115,9 +123,24 @@ export default {
     submit () {
       this.$refs.form.validate(result => {
         if (result) {
-          this.$message.success('登陆成功')
+          toLogin(this.form).then(res => {
+            if (res) {
+              this.$message.success('登陆成功')
+              // 保存用户的token
+              saveToken(res.data.token)
+              // 跳转路由
+              this.$router.push('/layout')
+            } else {
+              this.$message.error('登录失败')
+            }
+          })
         }
       })
+    },
+    // 刷新图形码
+    refreshCode () {
+      this.login_imgCode =
+        process.env.VUE_APP_URL + '/captcha?type=login&t=' + Date.now()
     }
   }
 }
