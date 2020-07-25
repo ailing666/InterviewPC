@@ -5,9 +5,9 @@
         <i class="el-icon-s-fold"></i>
         <img src="@/assets/img/layout-logo.png" alt="" />
         <p class="flex"></p>
-        <img src="@/assets/img/layout-avatar.png" alt="" />
-        <span class="username">李达,您好</span>
-        <el-button type="primary">退出</el-button>
+        <img class="user-avatar" :src="baseURL + '/' + info.avatar" alt="" />
+        <span class="username">{{ info.username }},您好</span>
+        <el-button type="primary" @click="exit">退出</el-button>
       </el-header>
       <el-container>
         <el-aside width="200px">
@@ -31,12 +31,40 @@
 </template>
 
 <script>
+import { getUserInfo, userExit } from '@/api/layout.js'
+import { removeToken } from '@/util/token.js'
 export default {
+  created () {
+    getUserInfo().then(res => {
+      this.$store.state.userInfo = res.data
+    })
+  },
   data () {
     return {
-      data () {
-        return {}
-      }
+      baseURL: process.env.VUE_APP_URL
+    }
+  },
+  methods: {
+    exit () {
+      this.$confirm('您确定要退出吗?', '提示', {
+        comfirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'waring'
+      })
+        .then(() => {
+          userExit().then(() => {
+            // 清楚token
+            removeToken()
+            // 跳转到login液
+            this.$router.push('/login')
+          })
+        })
+        .catch(() => {})
+    }
+  },
+  computed: {
+    info () {
+      return this.$store.state.userInfo
     }
   }
 }
@@ -53,6 +81,11 @@ export default {
   }
   .flex {
     flex: 1;
+  }
+  .user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
   }
   .username {
     font-size: 20px;

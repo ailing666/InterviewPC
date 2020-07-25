@@ -11,6 +11,11 @@ import EnterpriseList from '@/views/layout/enterpriseList/EnterpriseList.vue'
 import QuestionList from '@/views/layout/questionList/QuestionList.vue'
 import SubjectList from '@/views/layout/subjectList/SubjectList.vue'
 import UserList from '@/views/layout/userList/UserList.vue'
+// 解决同一路路由点击两次报错
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 // 实例化
 const router = new VueRouter({
   routes: [
@@ -76,7 +81,9 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   next()
 })
-router.afterEach()
+router.afterEach(to => {
+  document.title = to.meta.title
+})
 
 // 暴露
 export default router

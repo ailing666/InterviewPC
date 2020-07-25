@@ -1,6 +1,7 @@
 // 导入axios
 import axios from 'axios'
 import { Message } from 'element-ui'
+import { getToken } from '@/util/token'
 // 创建axios副本
 let _fetch = axios.create({
   baseURL: process.env.VUE_APP_URL,
@@ -10,6 +11,8 @@ let _fetch = axios.create({
 // 添加请求拦截器
 _fetch.interceptors.request.use(
   function (config) {
+    // 请求头带token
+    config.headers.token = getToken()
     // 在发送请求之前做些什么
     return config
   },
