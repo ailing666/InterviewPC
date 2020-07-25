@@ -129,16 +129,14 @@ export default {
       this.$refs.form.validate(result => {
         if (result) {
           toLogin(this.form).then(res => {
-            if (res) {
-              this.$message.success('登陆成功')
-              // 保存用户的token
-              saveToken(res.data.token)
-              // 跳转路由
-              this.$router.push('/layout')
-            } else {
-              this.$message.error('登录失败')
-            }
+            this.$message.success('登陆成功')
+            // 保存用户的token
+            saveToken(res.data.token)
+            // 跳转路由
+            this.$router.push('/layout')
           })
+        } else {
+          this.$message.error('登录失败')
         }
       })
     },

@@ -60,7 +60,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer">
-        <el-button>取消</el-button>
+        <el-button @click="closeDialog">取消</el-button>
         <el-button type="primary" @click="sumbit">确定</el-button>
       </div>
     </el-dialog>
@@ -68,8 +68,16 @@
 </template>
 
 <script>
-import { sendCode } from '@/api/register.js'
+import { sendCode, userRegister } from '@/api/register.js'
 export default {
+  watch: {
+    isShow (newVal) {
+      if (newVal == false) {
+        this.$refs.form.resetFields()
+        this.imageUrl = ''
+      }
+    }
+  },
   data () {
     return {
       time: 30, //倒计时
@@ -154,9 +162,7 @@ export default {
         }, 1000)
         sendCode({ code: this.form.imgCode, phone: this.form.phone }).then(
           res => {
-            if (res) {
-              this.$message.success(res.data.captcha + '')
-            }
+            this.$message.success(res.data.captcha + '')
           }
         )
       }
@@ -192,11 +198,17 @@ export default {
     sumbit () {
       this.$refs.form.validate(result => {
         if (result) {
-          this.$message.success('注册成功')
+          userRegister(this.form).then(() => {
+            this.$message.success('注册成功')
+            this.isShow = false
+          })
         } else {
           this.$message.error('注册失败')
         }
       })
+    },
+    closeDialog () {
+      this.isShow = false
     }
   }
 }
