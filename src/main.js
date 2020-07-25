@@ -1,8 +1,11 @@
 import Vue from 'vue'
 import App from './App.vue'
-
+// 导入router
+import router from '@/router/index.js'
 Vue.config.productionTip = false
 
 new Vue({
-  render: h => h(App),
+  // 注入vue实例
+  router,
+  render: h => h(App)
 }).$mount('#app')
