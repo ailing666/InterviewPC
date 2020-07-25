@@ -20,7 +20,7 @@
         <el-form-item>
           <el-button type="primary" @click="search">搜索</el-button>
           <el-button @click="clearList">清除</el-button>
-          <el-button type="primary">+新增学科</el-button>
+          <el-button type="primary" @click="add">+新增学科</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -72,18 +72,22 @@
         :total="pagination.total"
       >
       </el-pagination>
+      <AddSubject ref="addSubject" :type="type" @search="search"></AddSubject>
     </el-card>
   </div>
 </template>
 
 <script>
 import { getSubjectList, setStatus, delList } from '@/api/subject'
+import AddSubject from '@/views/layout/subjectList/AddSubject.vue'
 export default {
   created () {
     this.getData()
   },
+  components: { AddSubject },
   data () {
     return {
+      type: 'edit',
       pagination: {
         pageSize: 1,
         currentPage: 1,
@@ -132,7 +136,14 @@ export default {
       this.getData()
     },
     edit (row) {
-      window.console.log(row)
+      this.type = 'edit'
+      this.$refs.addSubject.isShow = true
+      //  深克隆
+      this.$refs.addSubject.form = JSON.parse(JSON.stringify(row))
+    },
+    add () {
+      this.type = 'add'
+      this.$refs.addSubject.isShow = true
     },
     // 设置状态
     changeStatus (id) {
