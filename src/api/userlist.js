@@ -1,14 +1,14 @@
 import _fetch from '@/util/fetch.js'
-export function getEnterpriseList (params) {
+export function getUserList (params) {
   return _fetch({
-    url: '/enterprise/list',
+    url: '/user/list',
     params
   })
 }
 // 设置状态
 export function setStatus (data) {
   return _fetch({
-    url: '/enterprise/status',
+    url: '/user/status',
     data,
     method: 'post'
   })
@@ -16,7 +16,7 @@ export function setStatus (data) {
 // 删除
 export function delList (data) {
   return _fetch({
-    url: '/enterprise/remove',
+    url: '/user/remove',
     data,
     method: 'post'
   })
@@ -24,14 +24,14 @@ export function delList (data) {
 
 export function addList (data) {
   return _fetch({
-    url: '/enterprise/add',
+    url: '/user/add',
     data,
     method: 'post'
   })
 }
 export function editList (data) {
   return _fetch({
-    url: '/enterprise/edit',
+    url: '/user/edit',
     data,
     method: 'post'
   })
