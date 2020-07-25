@@ -50,8 +50,8 @@
               <el-input v-model="form.rcode"></el-input>
             </el-col>
             <el-col :span="8" :offset="1">
-              <el-button :disabled="time != 3" @click="getUserCode"
-                >获取用户验证码<span v-if="time != 3"
+              <el-button :disabled="time != 30" @click="getUserCode"
+                >获取用户验证码<span v-if="time != 30"
                   >{{ time }}秒)</span
                 ></el-button
               >
@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import { sendCode } from '@/api/register.js'
 export default {
   data () {
     return {
@@ -136,14 +137,29 @@ export default {
   },
   methods: {
     getUserCode () {
-      this.time--
-      let timer = setInterval(() => {
-        this.time--
-        if (this.time < 0) {
-          clearInterval(timer)
-          this.time = 30
+      let num = 0
+      this.$refs.form.validateField(['imgCode', 'phone'], errorMessage => {
+        if (errorMessage == '') {
+          num++
         }
-      }, 1000)
+      })
+      if (num == 2) {
+        this.time--
+        let timer = setInterval(() => {
+          this.time--
+          if (this.time < 0) {
+            clearInterval(timer)
+            this.time = 30
+          }
+        }, 1000)
+        sendCode({ code: this.form.imgCode, phone: this.form.phone }).then(
+          res => {
+            if (res) {
+              this.$message.success(res.data.captcha + '')
+            }
+          }
+        )
+      }
     },
     // 上传前
     beforeAvatarUpload (file) {
