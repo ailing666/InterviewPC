@@ -1,9 +1,13 @@
 <template>
-  <div class="layout">主要</div>
+  <div class="layout"></div>
 </template>
 
 <script>
-export default {}
+export default {
+  data () {
+    return {}
+  }
+}
 </script>
 
 <style></style>

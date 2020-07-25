@@ -58,10 +58,13 @@
               >登录</el-button
             >
             <br />
-            <el-button type="primary" class="login_button">注册</el-button>
+            <el-button type="primary" class="login_button" @click="showRegister"
+              >注册</el-button
+            >
           </el-form-item>
         </el-form>
       </div>
+      <Register ref="register"></Register>
     </div>
     <div class="login_right">
       <img src="@/assets/img/login_right.png" alt="" />
@@ -72,7 +75,9 @@
 <script>
 import { toLogin } from '@/api/login.js'
 import { saveToken } from '@/util/token.js'
+import Register from '@/views/login/Register.vue'
 export default {
+  components: { Register },
   data () {
     return {
       login_imgCode: process.env.VUE_APP_URL + '/captcha?type=login',
@@ -136,6 +141,9 @@ export default {
           })
         }
       })
+    },
+    showRegister () {
+      this.$refs.register.isShow = true
     },
     // 刷新图形码
     refreshCode () {
