@@ -3,12 +3,12 @@
     <el-dialog
       title="提示"
       :visible.sync="isShow"
-      width="50%"
+      width="40%"
       :show-close="false"
     >
       <div slot="title">用户注册</div>
       <!-- 表单区域 -->
-      <el-form :model="form" :rules="rules" ref="form">
+      <el-form :model="form" :rules="rules" ref="form" label-width="80px">
         <el-form-item prop="avatar" label="头像">
           <el-upload
             class="avatar-uploader"
@@ -35,10 +35,28 @@
           <el-input v-model="form.password"></el-input>
         </el-form-item>
         <el-form-item prop="imgCode" label="图形码">
-          <el-input v-model="form.imgCode"></el-input>
+          <el-row>
+            <el-col :span="15">
+              <el-input v-model="form.imgCode"></el-input>
+            </el-col>
+            <el-col :span="8" :offset="1">
+              <img :src="imgCodeUrl" @click="changeCode" alt="" />
+            </el-col>
+          </el-row>
         </el-form-item>
         <el-form-item prop="rcode" label="验证码">
-          <el-input v-model="form.rcode"></el-input>
+          <el-row>
+            <el-col :span="15">
+              <el-input v-model="form.rcode"></el-input>
+            </el-col>
+            <el-col :span="8" :offset="1">
+              <el-button :disabled="time != 3" @click="getUserCode"
+                >获取用户验证码<span v-if="time != 3"
+                  >{{ time }}秒)</span
+                ></el-button
+              >
+            </el-col>
+          </el-row>
         </el-form-item>
       </el-form>
       <div slot="footer">
@@ -53,9 +71,11 @@
 export default {
   data () {
     return {
+      time: 30, //倒计时
       isShow: false, //对话框是否显示
       uploadUrl: process.env.VUE_APP_URL + '/uploads', //接口地址
       imageUrl: '', // 上传图片的地址
+      imgCodeUrl: process.env.VUE_APP_URL + '/captcha?type=sendsms',
       form: {
         avatar: '', //	是	string	头像地址
         username: '', //	是	string	用户名
@@ -115,14 +135,17 @@ export default {
     }
   },
   methods: {
-    handleAvatarSuccess (res) {
-      // 将图片地址赋值给form.avatar
-      this.form.avatar = res.data.file_path
-      // 上传成功图片地址
-      this.imageUrl = process.env.VUE_APP_URL + '/' + res.data.file_path
-      // 手动触发验证
-      this.$refs.form.validateField(['avatar'])
+    getUserCode () {
+      this.time--
+      let timer = setInterval(() => {
+        this.time--
+        if (this.time < 0) {
+          clearInterval(timer)
+          this.time = 30
+        }
+      }, 1000)
     },
+    // 上传前
     beforeAvatarUpload (file) {
       const isJPG = file.type === 'image/jpeg' || file.type === 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
@@ -135,6 +158,21 @@ export default {
       }
       return isJPG && isLt2M
     },
+    // 上传成功
+    handleAvatarSuccess (res) {
+      // 将图片地址赋值给form.avatar
+      this.form.avatar = res.data.file_path
+      // 上传成功图片地址
+      this.imageUrl = process.env.VUE_APP_URL + '/' + res.data.file_path
+
+      // 手动触发验证
+      this.$refs.form.validateField(['avatar'])
+    },
+    changeCode () {
+      this.imgCodeUrl =
+        process.env.VUE_APP_URL + '/captcha?type=sendsms&t=' + Date.now()
+    },
+    // 提交
     sumbit () {
       this.$refs.form.validate(result => {
         if (result) {
