@@ -12,7 +12,7 @@
       </div>
       <!-- 表单 -->
       <div class="login_left_body">
-        <el-form :model="form">
+        <el-form :model="form" :rules="rules" ref="form">
           <el-form-item prop="phone">
             <el-input
               v-model="form.phone"
@@ -24,6 +24,7 @@
             <el-input
               v-model="form.password"
               placeholder="请输入密码"
+              show-password
               prefix-icon="el-icon-lock"
             ></el-input>
           </el-form-item>
@@ -41,14 +42,16 @@
               </el-col>
             </el-row>
           </el-form-item>
-          <el-form-item>
-            <el-checkbox
+          <el-form-item prop="isPass">
+            <el-checkbox v-model="form.isPass"
               >我已阅读并同意<el-link type="primary">用户协议</el-link
               >和<el-link type="primary">隐私条款</el-link></el-checkbox
             >
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" class="login_button">登录</el-button>
+            <el-button type="primary" class="login_button" @click="submit"
+              >登录</el-button
+            >
             <br />
             <el-button type="primary" class="login_button">注册</el-button>
           </el-form-item>
@@ -66,10 +69,55 @@ export default {
   data () {
     return {
       form: {
+        isPass: '',
         phone: '', //是	string	手机号
         password: '', //是	string	密码
         code: '' //是	string	验证码
+      },
+      rules: {
+        isPass: [
+          {
+            validator: (rule, value, callback) => {
+              if (value == true) {
+                callback()
+              } else {
+                callback(new Error('请勾选同意用户条款'))
+              }
+            }
+          }
+        ],
+        phone: [
+          { required: true, message: '必填项', trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              let _reg = /^(0|86|17951)?(13[0-9]|15[012356789]|166|17[3678]|18[0-9]|14[57])[0-9]{8}$/
+              if (_reg.test(value)) {
+                callback()
+              } else {
+                callback(new Error('手机号格式错误'))
+              }
+            },
+            trigger: 'change'
+          }
+        ],
+        password: [
+          { required: true, message: '必填项', trigger: 'blur' },
+          { min: 6, max: 12, message: '请输入6-12位密码', trigger: 'change' }
+        ],
+        code: [
+          { required: true, message: '必填项', trigger: 'blur' },
+          { min: 4, max: 4, message: '请输入4位数验证码', trigger: 'change' }
+        ]
       }
+    }
+  },
+  methods: {
+    submit () {
+      this.$refs.form.validate(result => {
+        if (result) {
+          this.$message.success('登陆成功')
+        }
+      })
     }
   }
 }
