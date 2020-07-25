@@ -25,12 +25,18 @@ const router = new VueRouter({
     },
     {
       path: '/login',
-      component: Login
+      component: Login,
+      meta: {
+        title: '登录'
+      }
     },
     {
       path: '/layout',
       component: Layout,
       redirect: '/layout/subjectList',
+      meta: {
+        title: '首页列表'
+      },
       children: [
         {
           path: '/layout/chart',
