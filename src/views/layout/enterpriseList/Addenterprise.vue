@@ -1,21 +1,21 @@
 <template>
   <div class="addSubject">
     <el-dialog :visible="isShow" width="30%">
-      <div slot="title">新增学科</div>
+      <div slot="title">新增企业</div>
       <el-form :model="form" :rules="rules" label-width="100px" ref="form">
-        <el-form-item label="学科编号" prop="rid">
-          <el-input v-model="form.rid"></el-input>
+        <el-form-item label="企业编号" prop="eid">
+          <el-input v-model="form.eid"></el-input>
         </el-form-item>
-        <el-form-item label="学科名称" prop="name">
+        <el-form-item label="企业名称" prop="name">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
-        <el-form-item label="学科简称" prop="short_name">
+        <el-form-item label="企业简称" prop="short_name">
           <el-input v-model="form.short_name"></el-input>
         </el-form-item>
-        <el-form-item label="学科简介" prop="intro">
+        <el-form-item label="企业简介" prop="intro">
           <el-input v-model="form.intro"></el-input>
         </el-form-item>
-        <el-form-item label="学科备注" prop="remark">
+        <el-form-item label="企业备注" prop="remark">
           <el-input v-model="form.remark"></el-input>
         </el-form-item>
       </el-form>
@@ -28,18 +28,18 @@
 </template>
 
 <script>
-import { addList, editList } from '@/api/subject'
+import { addList, editList } from '@/api/enterprise'
 export default {
   props: ['type'],
   watch: {
     isShow (newVal) {
       if (newVal == false) {
         this.form = {
-          rid: '', //是	string	学科编号
-          name: '', //是	string	学科名称
-          short_name: '', //否	string	学科简称
-          intro: '', //否	string	学科简介
-          remark: '' //否	string	备注
+          eid: '', //	是	string	企业编号
+          name: '', //	是	string	企业名称
+          short_name: '', //	是	string	企业简称
+          intro: '', //	是	string	企业简介
+          remark: '' //	否	string	企业备注
         }
       }
       this.$nextTick(() => {
@@ -51,15 +51,17 @@ export default {
     return {
       isShow: false,
       form: {
-        rid: '', //是	string	学科编号
-        name: '', //是	string	学科名称
-        short_name: '', //否	string	学科简称
-        intro: '', //否	string	学科简介
-        remark: '' //否	string	备注
+        eid: '', //	是	string	企业编号
+        name: '', //	是	string	企业名称
+        short_name: '', //	是	string	企业简称
+        intro: '', //	是	string	企业简介
+        remark: '' //	否	string	企业备注
       },
       rules: {
-        rid: [{ required: true, message: '必填', trigger: 'change' }],
-        name: [{ required: true, message: '必填', trigger: 'change' }]
+        eid: [{ required: true, message: '必填', trigger: 'change' }],
+        name: [{ required: true, message: '必填', trigger: 'change' }],
+        short_name: [{ required: true, message: '必填', trigger: 'change' }],
+        intro: [{ required: true, message: '必填', trigger: 'change' }]
       }
     }
   },
